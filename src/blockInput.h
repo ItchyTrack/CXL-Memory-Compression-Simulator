@@ -2,24 +2,21 @@
 #define blockInput_h
 
 #include "request.h"
-#include <queue>
 #include <array>
 #include <optional>
+#include <queue>
 
-template <unsigned int INPUT_COUNT>
+template <unsigned int INPUT_COUNT, class Compute>
 class BlockInput {
+	friend Compute;
 public:
-	// -------------------------- External API --------------------------
-
 	// unlimited sized queues for now and so returns true
 	bool canAcceptRequest(unsigned int inputIndex) const;
 	bool pushRequest(unsigned int inputIndex, const Request& request);
 
-	// -------------------------- Internal API --------------------------
-
+private:
 	std::optional<Request> getNextRequest(unsigned int inputIndex);
 
-private:
 	std::array<std::queue<Request>, INPUT_COUNT> inputBuffers;
 };
 

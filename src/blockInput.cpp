@@ -1,8 +1,8 @@
 #include "blockInput.h"
 #include <iostream>
 
-template <unsigned int INPUT_COUNT>
-bool BlockInput<INPUT_COUNT>::canAcceptRequest(unsigned int inputIndex) const {
+template <unsigned int INPUT_COUNT, class Compute>
+bool BlockInput<INPUT_COUNT, Compute>::canAcceptRequest(unsigned int inputIndex) const {
 	if (INPUT_COUNT <= inputIndex) {
 		std::cout << "ERROR: wrong input index passed to BlockInput::canAcceptRequest!\n";
 		return false;
@@ -10,14 +10,14 @@ bool BlockInput<INPUT_COUNT>::canAcceptRequest(unsigned int inputIndex) const {
 	return true;
 }
 
-template <unsigned int INPUT_COUNT>
-bool BlockInput<INPUT_COUNT>::pushRequest(unsigned int inputIndex, const Request& request) {
+template <unsigned int INPUT_COUNT, class Compute>
+bool BlockInput<INPUT_COUNT, Compute>::pushRequest(unsigned int inputIndex, const Request& request) {
 	if (!canAcceptRequest(inputIndex)) return false;
 	inputBuffers[inputIndex].push(request);
 }
 
-template <unsigned int INPUT_COUNT>
-std::optional<Request> BlockInput<INPUT_COUNT>::getNextRequest(unsigned int inputIndex) {
+template <unsigned int INPUT_COUNT, class Compute>
+std::optional<Request> BlockInput<INPUT_COUNT, Compute>::getNextRequest(unsigned int inputIndex) {
 	if (INPUT_COUNT <= inputIndex) {
 		std::cout << "ERROR: wrong input index passed to BlockInput::getNextRequest!\n";
 		return std::nullopt;
