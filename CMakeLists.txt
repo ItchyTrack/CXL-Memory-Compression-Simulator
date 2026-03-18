@@ -1,0 +1,18 @@
+cmake_minimum_required(VERSION 3.10)
+project(Simple-CXL-Simulator VERSION 0.0.1 LANGUAGES CXX)
+
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+# Paths
+set(SOURCE_DIR "${CMAKE_SOURCE_DIR}/src")
+
+# Sources
+file(GLOB_RECURSE PROJECT_SOURCES CONFIGURE_DEPENDS
+    "${SOURCE_DIR}/*.cpp"
+)
+
+# Executable
+add_executable(${PROJECT_NAME} ${PROJECT_SOURCES})
