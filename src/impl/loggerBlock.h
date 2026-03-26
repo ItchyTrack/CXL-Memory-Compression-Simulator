@@ -1,7 +1,7 @@
 #ifndef loggerBlock_h
 #define loggerBlock_h
 
-#include "block.h"
+#include "../block.h"
 
 /*
  * The idea is that each components you create the template of Block for each component.
@@ -29,7 +29,7 @@ public:
 	void update() {
 		// do reads before writes
 		for (unsigned int i = 0; i < INPUT_COUNT; i++) {
-			std::optional<Request> request = loggerBlock.getIputInterface().getNextRequest(i);
+			std::optional<Request> request = loggerBlock.blockInput.getNextRequest(i);
 			if (!request.has_value()) continue;
 			printf("INPUT %d: ", i);
 			request->printInfo();
