@@ -23,8 +23,24 @@ public:
 		sramCache(*this) {}
 
 	void update() {
-		sramCache.update();
+		compressedStorage.update();
+		compressor.update();
+		decompressor.update();
+		dramCache.update();
 		loggerBlock.update();
+		metadataTable.update();
+		sramCache.update();
+	}
+	void debugPrint() const {
+		printf("------------------------------------\n");
+		compressedStorage.debugPrint();
+		compressor.debugPrint();
+		decompressor.debugPrint();
+		dramCache.debugPrint();
+		loggerBlock.debugPrint();
+		metadataTable.debugPrint();
+		sramCache.debugPrint();
+		printf("------------------------------------\n");
 	}
 
 	// these are public for the router

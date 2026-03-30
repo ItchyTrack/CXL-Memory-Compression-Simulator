@@ -11,14 +11,14 @@ class SramCacheCompute;
 class SramCacheRouter;
 
 // [read requests, write requests] (not device but sram)
-typedef Block<2, SramCacheCompute, SramCacheRouter> SramCache;
+typedef Block<2, SramCacheCompute, SramCacheRouter, "SramCache"> SramCache;
 
 class SramCacheRouter {
 public:
 	SramCacheRouter(Device& device) : device(device) {}
 
 	bool route(const Request& request, bool found);
-
+	void debugPrint() const { /* printf("SramCacheRouter\n"); */ }
 private:
 	Device& device;
 };
@@ -37,6 +37,8 @@ public:
 			sramCache.outputRouter.route(request.value(), rand() % 2 == 0); // we just assume it works because there is no input buffer limit
 		}
 	}
+
+	void debugPrint() const { /* printf("SramCacheCompute\n"); */ }
 private:
 	SramCache& sramCache;
 };

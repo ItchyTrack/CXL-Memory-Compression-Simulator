@@ -5,7 +5,16 @@
 
 class Device;
 
-template <unsigned int INPUT_COUNT, class Compute, class OutputRouter>
+template <auto N>
+struct string_litteral {
+    constexpr string_litteral(const char (&str)[N]) {
+        std::copy_n(str, N, value);
+    }
+
+    char value[N];
+};
+
+template <unsigned int INPUT_COUNT, class Compute, class OutputRouter, string_litteral NAME>
 class Block {
 	friend Compute;
 public:
@@ -15,6 +24,12 @@ public:
 	const BlockInput<INPUT_COUNT, Compute>& getIputInterface() const { return blockInput; }
 
 	void update();
+	void debugPrint() const {
+		printf("-- %s --\n", NAME.value);
+		blockInput.debugPrint();
+		compute.debugPrint();
+		outputRouter.debugPrint();
+	}
 
 private:
 	BlockInput<INPUT_COUNT, Compute> blockInput;
@@ -22,8 +37,8 @@ private:
 	OutputRouter outputRouter;
 };
 
-template <unsigned int INPUT_COUNT, class Compute, class OutputRouter>
-void Block<INPUT_COUNT, Compute, OutputRouter>::update() {
+template <unsigned int INPUT_COUNT, class Compute, class OutputRouter, string_litteral NAME>
+void Block<INPUT_COUNT, Compute, OutputRouter, NAME>::update() {
 	compute.update();
 }
 

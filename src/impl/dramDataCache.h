@@ -11,14 +11,14 @@ class DramDataCacheCompute;
 class DramDataCacheRouter;
 
 // [read requests, write requests]
-typedef Block<2, DramDataCacheCompute, DramDataCacheRouter> DramDataCache;
+typedef Block<2, DramDataCacheCompute, DramDataCacheRouter, "DramDataCache"> DramDataCache;
 
 class DramDataCacheRouter {
 public:
 	DramDataCacheRouter(Device& device) : device(device) {}
 
 	bool route(const Request& request);
-
+	void debugPrint() const { /* printf("DramDataCacheRouter\n"); */ }
 private:
 	Device& device;
 };
@@ -27,17 +27,48 @@ class DramDataCacheCompute {
 public:
 	DramDataCacheCompute(DramDataCache& dramDataCache) : dramDataCache(dramDataCache) { }
 
-	void update() {
-		// do reads before writes
-		std::optional<Request> request = dramDataCache.blockInput.getNextRequest(0);
-		if (!request.has_value()) request = dramDataCache.blockInput.getNextRequest(1);
+	const unsigned int READ_TIME = 10; // clock cycels
+	const unsigned int WRITE_TIME = 20; // clock cycels
 
-		// if we found any requests then give it to the router
-		if (request.has_value()) {
-			dramDataCache.outputRouter.route(request.value()); // we just assume it works
+	void update() {
+		if (currentRequest.has_value()) { // if the dram is doing anything
+			timeLeft -= 1;
+			if (timeLeft == 0) {
+				dramDataCache.outputRouter.route(currentRequest.value()); // we just assume it works
+				currentRequest = std::nullopt;
+			}
+		} else {
+			// do reads before writes
+			currentRequest = dramDataCache.blockInput.getNextRequest(0);
+			if (currentRequest.has_value()) {
+				timeLeft = READ_TIME;
+			} else {
+				currentRequest = dramDataCache.blockInput.getNextRequest(1);
+				if (currentRequest.has_value()) {
+					timeLeft = WRITE_TIME;
+				}
+			}
+		}
+	}
+
+	void debugPrint() const {
+		printf("DramDataCacheCompute:\t\t");
+		if (currentRequest.has_value()) {
+			if (doingRead) {
+				printf("READ Time Left %u, ", timeLeft);
+				currentRequest.value().printInfo();
+			} else {
+				printf("WRITE Time Left %u, ", timeLeft);
+				currentRequest.value().printInfo();
+			}
+		} else {
+			printf("IDLE\n");
 		}
 	}
 private:
+	unsigned timeLeft = 0;
+	std::optional<Request> currentRequest;
+	bool doingRead = false;
 	DramDataCache& dramDataCache;
 };
 

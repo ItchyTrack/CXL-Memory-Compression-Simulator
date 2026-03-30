@@ -12,7 +12,7 @@ enum ActionType {
 struct Request {
 	Request(ActionType actionType) : action(actionType) {}
 
-	void printInfo() {
+	void printInfo(bool newline = true) const {
 		printf("Request ");
 		switch (action) {
 		case READ: {
@@ -28,7 +28,7 @@ struct Request {
 			printf("COMPRESS");
 		} break;
 		}
-		printf("\n");
+		if (newline) printf("\n");
 	}
 	ActionType action;
 };

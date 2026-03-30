@@ -14,7 +14,7 @@ public:
 	// unlimited sized queues for now and so returns true
 	bool canAcceptRequest(unsigned int inputIndex) const;
 	bool pushRequest(unsigned int inputIndex, const Request& request);
-
+	void debugPrint() const;
 private:
 	std::optional<Request> getNextRequest(unsigned int inputIndex);
 
@@ -47,6 +47,19 @@ std::optional<Request> BlockInput<INPUT_COUNT, Compute>::getNextRequest(unsigned
 	Request request = std::move(inputBuffers[inputIndex].front());
 	inputBuffers[inputIndex].pop();
 	return request;
+}
+
+template <unsigned int INPUT_COUNT, class Compute>
+void BlockInput<INPUT_COUNT, Compute>::debugPrint() const {
+	printf("BlockInput:\t\t");
+	for (unsigned int inputIndex = 0; inputIndex < INPUT_COUNT; inputIndex++) {
+		if (inputBuffers[inputIndex].size() == 0) {
+			printf("\tInput: %u: Empty\t", inputIndex);
+		} else {
+			printf("\tInput: %u: Size: %u", inputIndex, (unsigned int )inputBuffers[inputIndex].size());
+		}
+	}
+	printf("\n");
 }
 
 #endif /* blockInput_h */

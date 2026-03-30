@@ -11,14 +11,14 @@ class DecompressorCompute;
 class DecompressorRouter;
 
 // [read requests, write requests]
-typedef Block<2, DecompressorCompute, DecompressorRouter> Decompressor;
+typedef Block<2, DecompressorCompute, DecompressorRouter, "Decompressor"> Decompressor;
 
 class DecompressorRouter {
 public:
 	DecompressorRouter(Device& device) : device(device) {}
 
 	bool route(const Request& request);
-
+	void debugPrint() const { /* printf("DecompressorRouter\n"); */ }
 private:
 	Device& device;
 };
@@ -38,6 +38,21 @@ public:
 		decompressing[end] = decompressor.blockInput.getNextRequest(0);
 		// increment pipeline location
 		end = (end + 1) % PIPELINE_DEPTH;
+	}
+
+	void debugPrint() const {
+		printf("DecompressorCompute:\t\tqueue");
+		for (unsigned int i = 0; i < PIPELINE_DEPTH; i++) {
+			const std::optional<Request>& request = decompressing[(end + i + 1) % PIPELINE_DEPTH];
+			if (request.has_value()) {
+				printf("[");
+				request.value().printInfo();
+				printf("]");
+			} else {
+				printf("[]");
+			}
+		}
+		printf("\n");
 	}
 private:
 	unsigned int end = 0;
