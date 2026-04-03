@@ -8,6 +8,13 @@
 #include "impl/loggerBlock.h"
 #include "impl/metadataTable.h"
 #include "impl/sramCache.h"
+#include "router.h"
+
+struct DeviceConfig {
+	// Router
+	Router router;
+	// Limits
+};
 
 class Device {
 public:
@@ -43,6 +50,8 @@ public:
 		printf("------------------------------------\n");
 	}
 
+	const DeviceConfig& getDeviceConfig() const { return deviceConfig; }
+
 	// these are public for the router
 	CompressedStorage compressedStorage;
 	Compressor compressor;
@@ -51,6 +60,8 @@ public:
 	LoggerBlock<1> loggerBlock;
 	MetadataTable metadataTable;
 	SramCache sramCache;
+private:
+	DeviceConfig deviceConfig;
 };
 
 #endif /* device_h */

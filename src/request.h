@@ -2,12 +2,17 @@
 #define request_h
 
 #include <cstdio>
+#include <string>
+
 enum ActionType {
 	READ,
 	WRITE,
 	CACHE_EVICT,
 	COMPRESS,
 };
+
+std::string actionTypeToString(ActionType actionType);
+std::optional<ActionType> stringToActionType(const std::string actionType);
 
 struct Request {
 	Request(ActionType actionType) : action(actionType) {}

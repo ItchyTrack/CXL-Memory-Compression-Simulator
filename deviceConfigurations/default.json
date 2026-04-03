@@ -1,0 +1,178 @@
+{
+  "Routing": {
+    "CompressedStorage": {
+      "READ": [
+        {
+          "Condition": [],
+          "Output": { "Block": "Decompressor", "Port": 0 }
+        }
+      ],
+      "WRITE": [
+        {
+          "Condition": [],
+          "Output": { "Block": "Decompressor", "Port": 0 }
+        }
+      ],
+      "CACHE_EVICT": [
+        {
+          "Condition": [],
+          "Output": { "Block": "Decompressor", "Port": 0 }
+        }
+      ],
+      "COMPRESS": [
+        {
+          "Condition": [],
+          "Output": { "Block": "Decompressor", "Port": 0 }
+        }
+      ]
+    },
+
+    "Compressor": {
+      "CACHE_EVICT": [
+        {
+          "Condition": [],
+          "Output": { "Block": "CompressedStorage", "Port": 1 }
+        }
+      ],
+      "COMPRESS": [
+        {
+          "Condition": [],
+          "Output": { "Block": "CompressedStorage", "Port": 1 }
+        }
+      ]
+    },
+
+    "Decompressor": {
+      "READ": [
+        {
+          "Condition": [],
+          "Output": { "Block": "LoggerBlock", "Port": 0 }
+        }
+      ],
+      "WRITE": [
+        {
+          "Condition": [],
+          "Output": { "Block": "LoggerBlock", "Port": 0 }
+        }
+      ],
+      "CACHE_EVICT": [
+        {
+          "Condition": [],
+          "Output": { "Block": "LoggerBlock", "Port": 0 }
+        }
+      ]
+    },
+
+    "DramDataCache": {
+      "READ": [
+        {
+          "Condition": [],
+          "Output": { "Block": "LoggerBlock", "Port": 0 }
+        }
+      ],
+      "WRITE": [
+        {
+          "Condition": [],
+          "Output": { "Block": "LoggerBlock", "Port": 0 }
+        }
+      ],
+      "CACHE_EVICT": [
+        {
+          "Condition": [],
+          "Output": { "Block": "LoggerBlock", "Port": 0 }
+        }
+      ],
+      "COMPRESS": [
+        {
+          "Condition": [],
+          "Output": { "Block": "LoggerBlock", "Port": 0 }
+        }
+      ]
+    },
+
+    "MetadataTable": {
+      "READ": [
+        {
+          "Condition": [
+            { "Type": "Int Compare", "Value": 1, "Compare": "==", "Arg": "DRC_valid" }
+          ],
+          "Output": { "Block": "DramCache", "Port": 0 }
+        },
+        {
+          "Condition": [
+            { "Type": "Int Compare", "Value": 0 , "Compare": "==", "Arg": "DRC_valid"},
+            { "Type": "Int Compare", "Value": 0, "Compare": "==", "Arg": "CSA_valid" }
+          ]
+        }
+      ],
+
+      "WRITE": [
+        {
+          "Condition": [
+            { "Type": "Int Compare", "Value": 1, "Compare": "==", "Arg": "DRC_valid" }
+          ]
+        },
+        {
+          "Condition": [
+            { "Type": "Int Compare", "Value": 0 , "Compare": "==", "Arg": "DRC_valid"},
+            { "Type": "Int Compare", "Value": 1, "Compare": "==", "Arg": "CSA_valid" }
+          ]
+        },
+        {
+          "Condition": [
+            { "Type": "Int Compare", "Value": 0 , "Compare": "==", "Arg": "DRC_valid"},
+            { "Type": "Int Compare", "Value": 0, "Compare": "==", "Arg": "CSA_valid" }
+          ]
+        }
+      ],
+
+      "CACHE_EVICT": [
+        {
+          "Condition": [],
+          "Output": { "Block": "LoggerBlock", "Port": 0 }
+        }
+      ],
+
+      "COMPRESS": [
+        {
+          "Condition": [],
+          "Output": { "Block": "LoggerBlock", "Port": 0 }
+        }
+      ]
+    },
+
+    "SramCache": {
+      "READ": [
+        {
+          "Condition": [
+            { "Type": "Int Compare", "Value": 1, "Compare": "==", "Arg": "found" }
+          ],
+          "Output": { "Block": "DramCache", "Port": 0 }
+        },
+        {
+          "Condition": [
+            { "Type": "Int Compare", "Value": 0, "Compare": "==", "Arg": "found" }
+          ],
+          "Output": { "Block": "MetadataTable", "Port": 0 }
+        }
+      ],
+
+      "WRITE": [
+        {
+          "Condition": [
+            { "Type": "Int Compare", "Value": 1, "Compare": "==", "Arg": "found" }
+          ],
+          "Output": { "Block": "DramCache", "Port": 0 }
+        },
+        {
+          "Condition": [
+            { "Type": "Int Compare", "Value": 0, "Compare": "==", "Arg": "found" }
+          ],
+          "Output": { "Block": "MetadataTable", "Port": 0 }
+        }
+      ]
+    }
+  },
+
+  "Limits": {}
+}
