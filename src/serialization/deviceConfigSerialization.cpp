@@ -1,7 +1,8 @@
 #include "deviceConfigSerialization.h"
-#include "../external/json.hpp"
 
 #include <fstream>
+
+#include "../external/json.hpp"
 using json = nlohmann::json;
 /*
 {
@@ -76,7 +77,7 @@ std::optional<DeviceConfig> loadDeviceConfig(std::string filePath) {
 				std::vector<RouterOption> routerOptions;
 				for (auto& optionJson : actionTypeIter.value()) {
 					RouterOption routerOption;
-					if (auto conditions = jsonGet<json>(optionJson, "Condition"); conditions.has_value() && conditions->is_array()) {
+					if (auto conditions = jsonGet<json>(optionJson, "Conditions"); conditions.has_value() && conditions->is_array()) {
 						for (auto& condition : *conditions) {
 							if (auto typeString = jsonGet<std::string>(condition, "Type"); typeString.has_value()) {
 								if (typeString.value() == "Int Compare") {
@@ -121,4 +122,63 @@ std::optional<DeviceConfig> loadDeviceConfig(std::string filePath) {
 	deviceConfig.router.setData(std::move(routerData));
 
 	return deviceConfig;
+}
+
+void saveDeviceConfig(std::string filePath, const DeviceConfig& deviceConfig) {
+    const RouterData& routerData = deviceConfig.router.getData();
+
+    json routing = json::object();
+
+    for (const auto& [blockType, actionMap] : routerData) {
+        const std::string blockKey = blockTypeToString(blockType);
+        routing[blockKey] = json::object();
+
+        for (const auto& [actionType, options] : actionMap) {
+            const std::string actionKey = actionTypeToString(actionType);
+            json optionsArray = json::array();
+
+            for (const RouterOption& opt : options) {
+                json optionJson = json::object();
+
+                json conditionsArray = json::array();
+                for (const auto& [arg, compare, value] : opt.condition.conditions) {
+                    json condJson;
+                    condJson["Type"]    = "Int Compare";
+                    condJson["Arg"]     = arg;
+                    condJson["Compare"] = compareToString(compare);
+                    condJson["Value"]   = value;
+                    conditionsArray.push_back(condJson);
+                }
+                optionJson["Conditions"] = conditionsArray;
+
+                json mutatorJson = json::object();
+                if (opt.mutator.setActionType.has_value())
+                    mutatorJson["SetActionType"] =
+                        actionTypeToString(opt.mutator.setActionType.value());
+                else
+                    mutatorJson["SetActionType"] = nullptr;
+                optionJson["Mutator"] = mutatorJson;
+
+                json outputJson;
+                outputJson["Block"] = blockTypeToString(opt.output.first);
+                outputJson["Port"]  = opt.output.second;
+                optionJson["Output"] = outputJson;
+
+                optionsArray.push_back(optionJson);
+            }
+
+            routing[blockKey][actionKey] = optionsArray;
+        }
+    }
+
+    json root;
+    root["Routing"] = routing;
+    root["Limits"]  = json::object();
+
+    std::ofstream file(filePath);
+    if (!file.is_open()) {
+        printf("ERROR: Failed to open DeviceConfig file for writing: %s.\n", filePath.c_str());
+        return;
+    }
+    file << root.dump(2);
 }

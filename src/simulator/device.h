@@ -16,7 +16,11 @@ struct DeviceConfig {
 	// Limits
 };
 
+struct SDL_Window;
+struct SDL_Renderer;
+
 class Device {
+	friend void run(SDL_Window* window, SDL_Renderer* renderer);
 public:
 	void read(const Request& request);
 	void write(const Request& request);
@@ -51,6 +55,7 @@ public:
 	}
 
 	const DeviceConfig& getDeviceConfig() const { return deviceConfig; }
+	void setDeviceConfig(DeviceConfig&& deviceConfig) { this->deviceConfig = deviceConfig; }
 
 	// these are public for the router
 	CompressedStorage compressedStorage;
@@ -61,6 +66,7 @@ public:
 	MetadataTable metadataTable;
 	SramCache sramCache;
 private:
+	DeviceConfig& getDeviceConfig() { return deviceConfig; }
 	DeviceConfig deviceConfig;
 };
 

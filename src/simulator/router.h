@@ -1,3 +1,6 @@
+#ifndef router_h
+#define router_h
+
 #include "request.h"
 #include <map>
 
@@ -82,8 +85,13 @@ struct RouterOption {
 
 typedef std::map<BlockType, std::map<ActionType, std::vector<RouterOption>>> RouterData;
 
+struct SDL_Window;
+struct SDL_Renderer;
+
 class Router {
+	friend void run(SDL_Window* window, SDL_Renderer* renderer);
 public:
+	const RouterData& getData() const { return routerData; }
 	void setData(RouterData&& routerData) { this->routerData = routerData; }
 	std::vector<std::tuple<BlockType, unsigned int, Request>> router(BlockType blockType, const Request& request, const RouteArgs& args) const {
 		auto routerDataIter = routerData.find(blockType);
@@ -112,3 +120,5 @@ public:
 private:
 	RouterData routerData;
 };
+
+#endif /* router_h */

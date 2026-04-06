@@ -93,7 +93,7 @@
     "MetadataTable": {
       "READ": [
         {
-          "Condition": [
+          "Conditions": [
             { "Type": "Int Compare", "Value": 1, "Compare": "==", "Arg": "DRC_valid" }
           ],
           "Output": { "Block": "DramCache", "Port": 0 }

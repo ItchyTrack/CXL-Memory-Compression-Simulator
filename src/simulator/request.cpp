@@ -10,9 +10,9 @@ std::string actionTypeToString(ActionType actionType) {
 };
 
 std::optional<ActionType> stringToActionType(const std::string actionType) {
-	if ("READ") return ActionType::READ;
-	if ("WRITE") return ActionType::WRITE;
-	if ("CACHE_EVICT") return ActionType::CACHE_EVICT;
-	if ("COMPRESS") return ActionType::COMPRESS;
+	if (actionType == "READ") return ActionType::READ;
+	if (actionType == "WRITE") return ActionType::WRITE;
+	if (actionType == "CACHE_EVICT") return ActionType::CACHE_EVICT;
+	if (actionType == "COMPRESS") return ActionType::COMPRESS;
 	return std::nullopt;
 }

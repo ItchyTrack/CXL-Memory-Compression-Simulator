@@ -19,8 +19,6 @@ Each block is made up of:
 +--------------------+
 ```
 (In addition to these functions there is an interface that is used to ask about the state of the block.)
-
-
 - Input:\
 The input is an interface that allows other blocks to give `Requests` to this block for it to process. This incudes an extra size one buffer for each input buffer used for (the thing where data can keep moving when buffers are full).
 
