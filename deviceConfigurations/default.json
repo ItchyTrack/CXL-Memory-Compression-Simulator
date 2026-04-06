@@ -145,13 +145,13 @@
       "READ": [
         {
           "Condition": [
-            { "Type": "Int Compare", "Value": 1, "Compare": "==", "Arg": "found" }
+            { "Type": "Int Compare", "Value": 1, "Compare": "==", "Arg": "Found" }
           ],
           "Output": { "Block": "DramCache", "Port": 0 }
         },
         {
           "Condition": [
-            { "Type": "Int Compare", "Value": 0, "Compare": "==", "Arg": "found" }
+            { "Type": "Int Compare", "Value": 0, "Compare": "==", "Arg": "Found" }
           ],
           "Output": { "Block": "MetadataTable", "Port": 0 }
         }
@@ -160,13 +160,13 @@
       "WRITE": [
         {
           "Condition": [
-            { "Type": "Int Compare", "Value": 1, "Compare": "==", "Arg": "found" }
+            { "Type": "Int Compare", "Value": 1, "Compare": "==", "Arg": "Found" }
           ],
           "Output": { "Block": "DramCache", "Port": 0 }
         },
         {
           "Condition": [
-            { "Type": "Int Compare", "Value": 0, "Compare": "==", "Arg": "found" }
+            { "Type": "Int Compare", "Value": 0, "Compare": "==", "Arg": "Found" }
           ],
           "Output": { "Block": "MetadataTable", "Port": 0 }
         }

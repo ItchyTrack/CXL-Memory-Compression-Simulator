@@ -2,7 +2,7 @@
 
 std::string blockTypeToString(BlockType blockType) {
 	switch (blockType) {
-	case COMPRESSED_STORAGE: return "Compressed Storage";
+	case COMPRESSED_STORAGE: return "CompressedStorage";
 	case COMPRESSOR: return "Compressor";
 	case DECOMPRESSOR: return "Decompressor";
 	case DRAM_DATA_CACHE: return "DramDataCache";

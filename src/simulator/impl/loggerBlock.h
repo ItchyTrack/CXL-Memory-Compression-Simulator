@@ -9,18 +9,10 @@
 
  template <unsigned int INPUT_COUNT>
 class LoggerBlockCompute;
-class LoggerBlockRouter;
 
 // [read requests, write requests] (not device but sram)
 template <unsigned int INPUT_COUNT>
-using LoggerBlock = Block<INPUT_COUNT, LoggerBlockCompute<INPUT_COUNT>, LoggerBlockRouter, "LoggerBlock">;
-
-class LoggerBlockRouter {
-public:
-	LoggerBlockRouter(Device& device) {}
-	bool route(const Request& request) { return false; }
-	void debugPrint() const {}
-};
+using LoggerBlock = Block<INPUT_COUNT, LoggerBlockCompute<INPUT_COUNT>, "LoggerBlock">;
 
 template <unsigned int INPUT_COUNT>
 class LoggerBlockCompute {

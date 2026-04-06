@@ -2,6 +2,7 @@
 #define block_h
 
 #include "blockInput.h"
+#include "router.h"
 
 class Device;
 
@@ -14,7 +15,17 @@ struct string_litteral {
     char value[N];
 };
 
-template <unsigned int INPUT_COUNT, class Compute, class OutputRouter, string_litteral NAME>
+template <string_litteral NAME>
+class OutputRouter {
+public:
+	OutputRouter(Device& device) : device(device) { }
+	bool route(const Request& request, const RouteArgs& args);
+	void debugPrint() const {}
+private:
+	Device& device;
+};
+
+template <unsigned int INPUT_COUNT, class Compute, string_litteral NAME>
 class Block {
 	friend Compute;
 public:
@@ -34,11 +45,11 @@ public:
 private:
 	BlockInput<INPUT_COUNT, Compute> blockInput;
 	Compute compute;
-	OutputRouter outputRouter;
+	OutputRouter<NAME> outputRouter;
 };
 
-template <unsigned int INPUT_COUNT, class Compute, class OutputRouter, string_litteral NAME>
-void Block<INPUT_COUNT, Compute, OutputRouter, NAME>::update() {
+template <unsigned int INPUT_COUNT, class Compute, string_litteral NAME>
+void Block<INPUT_COUNT, Compute, NAME>::update() {
 	compute.update();
 }
 

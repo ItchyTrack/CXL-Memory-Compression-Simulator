@@ -11,17 +11,7 @@ class DramDataCacheCompute;
 class DramDataCacheRouter;
 
 // [read requests, write requests]
-typedef Block<2, DramDataCacheCompute, DramDataCacheRouter, "DramDataCache"> DramDataCache;
-
-class DramDataCacheRouter {
-public:
-	DramDataCacheRouter(Device& device) : device(device) {}
-
-	bool route(const Request& request);
-	void debugPrint() const { /* printf("DramDataCacheRouter\n"); */ }
-private:
-	Device& device;
-};
+typedef Block<2, DramDataCacheCompute, "DramDataCache"> DramDataCache;
 
 class DramDataCacheCompute {
 public:
@@ -34,7 +24,7 @@ public:
 		if (currentRequest.has_value()) { // if the dram is doing anything
 			timeLeft -= 1;
 			if (timeLeft == 0) {
-				dramDataCache.outputRouter.route(currentRequest.value()); // we just assume it works
+				dramDataCache.outputRouter.route(currentRequest.value(), {}); // we just assume it works
 				currentRequest = std::nullopt;
 			}
 		} else {

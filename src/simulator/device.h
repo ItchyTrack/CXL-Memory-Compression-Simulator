@@ -20,7 +20,6 @@ struct SDL_Window;
 struct SDL_Renderer;
 
 class Device {
-	friend void run(SDL_Window* window, SDL_Renderer* renderer);
 public:
 	void read(const Request& request);
 	void write(const Request& request);
@@ -54,6 +53,7 @@ public:
 		printf("------------------------------------\n");
 	}
 
+	DeviceConfig& getDeviceConfig() { return deviceConfig; }
 	const DeviceConfig& getDeviceConfig() const { return deviceConfig; }
 	void setDeviceConfig(DeviceConfig&& deviceConfig) { this->deviceConfig = deviceConfig; }
 
@@ -66,7 +66,6 @@ public:
 	MetadataTable metadataTable;
 	SramCache sramCache;
 private:
-	DeviceConfig& getDeviceConfig() { return deviceConfig; }
 	DeviceConfig deviceConfig;
 };
 

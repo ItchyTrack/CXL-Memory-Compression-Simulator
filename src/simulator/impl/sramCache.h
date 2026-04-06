@@ -8,20 +8,9 @@
  */
 
 class SramCacheCompute;
-class SramCacheRouter;
 
 // [read requests, write requests] (not device but sram)
-typedef Block<2, SramCacheCompute, SramCacheRouter, "SramCache"> SramCache;
-
-class SramCacheRouter {
-public:
-	SramCacheRouter(Device& device) : device(device) {}
-
-	bool route(const Request& request, bool found);
-	void debugPrint() const { /* printf("SramCacheRouter\n"); */ }
-private:
-	Device& device;
-};
+typedef Block<2, SramCacheCompute, "SramCache"> SramCache;
 
 class SramCacheCompute {
 public:
@@ -34,7 +23,7 @@ public:
 
 		// if we found any requests then give it to the router
 		if (request.has_value()) {
-			sramCache.outputRouter.route(request.value(), rand() % 2 == 0); // we just assume it works because there is no input buffer limit
+			sramCache.outputRouter.route(request.value(), {{"Found", rand() % 2 == 0}}); // we just assume it works because there is no input buffer limit
 		}
 	}
 

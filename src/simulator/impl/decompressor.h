@@ -8,20 +8,9 @@
  */
 
 class DecompressorCompute;
-class DecompressorRouter;
 
 // [read requests, write requests]
-typedef Block<2, DecompressorCompute, DecompressorRouter, "Decompressor"> Decompressor;
-
-class DecompressorRouter {
-public:
-	DecompressorRouter(Device& device) : device(device) {}
-
-	bool route(const Request& request);
-	void debugPrint() const { /* printf("DecompressorRouter\n"); */ }
-private:
-	Device& device;
-};
+typedef Block<2, DecompressorCompute, "Decompressor"> Decompressor;
 
 class DecompressorCompute {
 public:
@@ -32,7 +21,7 @@ public:
 	void update() {
 		// grab from pipeline
 		if (decompressing[end].has_value()) {
-			decompressor.outputRouter.route(decompressing[end].value()); // we just assume it works
+			decompressor.outputRouter.route(decompressing[end].value(), {}); // we just assume it works
 		}
 		// read into pipeline
 		decompressing[end] = decompressor.blockInput.getNextRequest(0);

@@ -8,21 +8,9 @@
  */
 
 class MetadataTableCompute;
-class MetadataTableRouter;
 
 // [read requests, write requests]
-typedef Block<2, MetadataTableCompute, MetadataTableRouter, "MetadataTable"> MetadataTable;
-
-class MetadataTableRouter {
-public:
-	MetadataTableRouter(Device& device) : device(device) {}
-
-	bool route(const Request& request, bool DRC_valid, bool CSA_valid);
-
-	void debugPrint() const { /* printf("MetadataTableRouter\n"); */ }
-private:
-	Device& device;
-};
+typedef Block<2, MetadataTableCompute, "MetadataTable"> MetadataTable;
 
 class MetadataTableCompute {
 public:
@@ -35,7 +23,7 @@ public:
 		if (currentRequest.has_value()) { // if the dram is doing anything
 			timeLeft -= 1;
 			if (timeLeft == 0) {
-				metadataTable.outputRouter.route(currentRequest.value(), rand() % 2 == 0, rand() % 2 == 0); // we just assume it works
+				metadataTable.outputRouter.route(currentRequest.value(), {{"DRC_valid", rand() % 2 == 0}, {"CSA_valid", rand() % 2 == 0}}); // we just assume it works
 				currentRequest = std::nullopt;
 			}
 		} else {

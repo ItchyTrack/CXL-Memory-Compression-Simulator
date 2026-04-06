@@ -8,20 +8,9 @@
  */
 
 class CompressorCompute;
-class CompressorRouter;
 
 // [read requests, write requests]
-typedef Block<1, CompressorCompute, CompressorRouter, "Compressor"> Compressor;
-
-class CompressorRouter {
-public:
-	CompressorRouter(Device& device) : device(device) {}
-
-	bool route(const Request& request);
-	void debugPrint() const { /* printf("CompressorRouter\n"); */ }
-private:
-	Device& device;
-};
+typedef Block<1, CompressorCompute, "Compressor"> Compressor;
 
 class CompressorCompute {
 public:
@@ -32,7 +21,7 @@ public:
 	void update() {
 		// grab from pipeline
 		if (compressing[end].has_value()) {
-			compressor.outputRouter.route(compressing[end].value()); // we just assume it works
+			compressor.outputRouter.route(compressing[end].value(), {}); // we just assume it works
 		}
 		// read into pipeline
 		compressing[end] = compressor.blockInput.getNextRequest(0);

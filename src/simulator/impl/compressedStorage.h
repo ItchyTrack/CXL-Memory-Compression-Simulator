@@ -8,20 +8,9 @@
  */
 
 class CompressedStorageCompute;
-class CompressedStorageRouter;
 
 // [read requests, write requests]
-typedef Block<2, CompressedStorageCompute, CompressedStorageRouter, "CompressedStorage"> CompressedStorage;
-
-class CompressedStorageRouter {
-public:
-	CompressedStorageRouter(Device& device) : device(device) {}
-
-	bool route(const Request& request);
-	void debugPrint() const { /*printf("CompressedStorageRouter\n");*/ }
-private:
-	Device& device;
-};
+typedef Block<2, CompressedStorageCompute, "CompressedStorage"> CompressedStorage;
 
 class CompressedStorageCompute {
 public:
@@ -34,7 +23,7 @@ public:
 		if (currentRequest.has_value()) { // if the dram is doing anything
 			timeLeft -= 1;
 			if (timeLeft == 0) {
-				compressedStorage.outputRouter.route(currentRequest.value()); // we just assume it works
+				compressedStorage.outputRouter.route(currentRequest.value(), {}); // we just assume it works
 				currentRequest = std::nullopt;
 			}
 		} else {
