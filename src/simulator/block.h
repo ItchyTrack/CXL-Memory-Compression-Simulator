@@ -8,28 +8,27 @@ class Device;
 
 template <auto N>
 struct string_litteral {
-    constexpr string_litteral(const char (&str)[N]) {
-        std::copy_n(str, N, value);
-    }
-
-    char value[N];
+	constexpr string_litteral(const char (&str)[N]) { std::copy_n(str, N, value); }
+	char value[N];
 };
 
-template <string_litteral NAME>
 class OutputRouter {
 public:
-	OutputRouter(Device& device) : device(device) { }
+	OutputRouter(Device& device, const char* blockName) : device(device), blockName(blockName) { }
+	const char* getBlockName() { return blockName; }
 	bool route(const Request& request, const RouteArgs& args);
-	void debugPrint() const {}
+	void debugPrint() const { }
 private:
+	const char* blockName;
 	Device& device;
 };
 
 template <unsigned int INPUT_COUNT, class Compute, string_litteral NAME>
 class Block {
+	friend class SimulatorPanel;
 	friend Compute;
 public:
-	Block(Device& device) : compute(*this), outputRouter(device) { }
+	Block(Device& device) : compute(*this), outputRouter(device, NAME.value) { }
 
 	BlockInput<INPUT_COUNT, Compute>& getIputInterface() { return blockInput; }
 	const BlockInput<INPUT_COUNT, Compute>& getIputInterface() const { return blockInput; }
@@ -45,7 +44,7 @@ public:
 private:
 	BlockInput<INPUT_COUNT, Compute> blockInput;
 	Compute compute;
-	OutputRouter<NAME> outputRouter;
+	OutputRouter outputRouter;
 };
 
 template <unsigned int INPUT_COUNT, class Compute, string_litteral NAME>

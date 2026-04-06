@@ -1,8 +1,8 @@
 #ifndef routerEditor_h
 #define routerEditor_h
 
-#include "../simulator/router.h"
 #include "../external/nodes/imgui_node_editor.h"
+#include "../simulator/router.h"
 #include <functional>
 #include <mutex>
 #include <string>
@@ -12,80 +12,84 @@ struct SDL_Window;
 
 namespace nodeEditor = ax::NodeEditor;
 
+class Device;
+
 struct LinkMeta {
-    BlockType  srcBlock;
-    ActionType srcAction;
-    int        optionIndex;
+	BlockType srcBlock;
+	ActionType srcAction;
+	int optionIndex;
 };
 
+// Pure node-graph editor for the RouterData routing table.
+// Simulation controls live in SimulatorPanel.
 class RouterEditor {
 public:
-    // Pass the SDL window so file dialogs can be parented to it.
-    // onLoad(path) / onSave(path) are called on the render thread once the
-    // user confirms a path; the caller is responsible for the actual I/O.
-    explicit RouterEditor(SDL_Window* window,
-                          std::function<void(const std::string&)> onLoad = {},
-                          std::function<void(const std::string&)> onSave = {});
-    ~RouterEditor();
+	// onLoad(path) / onSave(path) — file I/O callbacks.
+	// onBlockSelected(bt)         — called when the user clicks a block node;
+	//                               use this to drive SimulatorPanel::selectBlock().
+	explicit RouterEditor(
+		SDL_Window* window,
+		Device& device,
+		std::function<void(BlockType)> onBlockSelected = {}
+	);
+	~RouterEditor();
 
-    void render(RouterData& routerData);
+	// Renders the full router editor (toolbar + graph + link inspector).
+	void render();
 
 private:
-    nodeEditor::EditorContext* ctx          = nullptr;
-    SDL_Window*        sdlWindow    = nullptr;
-    ActionType         viewedAction = READ;
-    std::optional<nodeEditor::LinkId> selectedLink = std::nullopt;
-    bool               positionsSet = false;
+	nodeEditor::EditorContext* ctx = nullptr;
+	SDL_Window* sdlWindow = nullptr;
+	ActionType viewedAction = READ;
+	std::optional<nodeEditor::LinkId> selectedLink = std::nullopt;
+	std::optional<nodeEditor::NodeId> selectedNode = std::nullopt;
+	bool positionsSet = false;
+	Device& device;
 
-    std::function<void(const std::string&)> onLoad;
-    std::function<void(const std::string&)> onSave;
+	std::function<void(BlockType)> onBlockSelected;
 
-    // Pending paths written by the SDL file-dialog callbacks (may arrive on a
-    // worker thread) and consumed on the next render() call.
-    struct PendingPath {
-        std::mutex  mtx;
-        std::string path;
-        bool        ready = false;
-    };
-    PendingPath pendingLoad;
-    PendingPath pendingSave;
+	// Pending file-dialog paths (may arrive on a worker thread).
+	struct PendingPath {
+		std::mutex mtx;
+		std::string path;
+		bool ready = false;
+	};
+	PendingPath pendingLoad;
+	PendingPath pendingSave;
 
-    // linkId (int) → metadata
-    std::unordered_map<int, LinkMeta> linkMetaMap;
+	// linkId (int) → metadata
+	std::unordered_map<int, LinkMeta> linkMetaMap;
 
-    void renderToolbar (RouterData& routerData);
-    void renderGraph   (RouterData& routerData);
-    void renderInspector(RouterData& routerData);
+	void renderToolbar();
+	void renderGraph();
+	void renderInspector();
 
-    void renderConditionEditor(Condition& cond);
-    void renderMutatorEditor  (RequestMutator& mut);
+	void renderConditionEditor(Condition& cond);
+	void renderMutatorEditor(RequestMutator& mut);
 
-    void drawNode      (BlockType bt);
-    void handleCreation(RouterData& routerData);
-    void handleDeletion(RouterData& routerData);
+	void drawNode(BlockType bt);
+	void handleCreation();
+	void handleDeletion();
+	void handleNodeSelection();
 
-    void rebuildLinkMeta(const RouterData& routerData);
+	void rebuildLinkMeta();
+	void flushPendingPaths();
 
-    // Drain any path that arrived from a file-dialog callback and invoke the
-    // corresponding handler.
-    void flushPendingPaths();
+	static void fileDialogLoadCB(void* userdata, const char* const* filelist, int filter);
+	static void fileDialogSaveCB(void* userdata, const char* const* filelist, int filter);
 
-    // SDL file-dialog callback shims — userdata is PendingPath*.
-    static void fileDialogLoadCB(void* userdata, const char* const* filelist, int filter);
-    static void fileDialogSaveCB(void* userdata, const char* const* filelist, int filter);
+	// ID scheme (non-overlapping, non-zero):
+	//   Node  IDs : 1 – 6
+	//   Input pins: 1000 + bt*10 + port
+	//   Output pin: 2000 + bt*10
+	//   Link  IDs : encoded by linkId()
+	static int nodeId(BlockType bt) { return (int)bt + 1; }
+	static int inputPinId(BlockType bt, int port) { return 1000 + (int)bt * 10 + port; }
+	static int outputPinId(BlockType bt, int port) { return 2000 + (int)bt * 10 + port; }
+	static int linkId(BlockType src, ActionType action, int idx);
 
-    // ID scheme (non-overlapping, non-zero):
-    //   Node  IDs :  1 – 7
-    //   Input pins : 1000 + bt*10 + port
-    //   Output pins: 2000 + bt*10 + port
-    //   Link  IDs  : encoded by linkId()
-    static int    nodeId     (BlockType bt)           { return (int)bt + 1; }
-    static int    inputPinId (BlockType bt, int port) { return 1000 + (int)bt * 10 + port; }
-    static int    outputPinId(BlockType bt, int port) { return 2000 + (int)bt * 10 + port; }
-    static int    linkId     (BlockType src, ActionType action, int idx);
-
-    static ImVec2 nodeLayout(BlockType bt);
-    static ImU32  linkColor (const RouterOption& opt);
+	static ImVec2 nodeLayout(BlockType bt);
+	static ImU32 linkColor(const RouterOption& opt);
 };
 
 #endif /* routerEditor_h */

@@ -9,10 +9,11 @@
 
 class CompressorCompute;
 
-// [read requests, write requests]
+// [input]
 typedef Block<1, CompressorCompute, "Compressor"> Compressor;
 
 class CompressorCompute {
+	friend class SimulatorPanel;
 public:
 	const unsigned int PIPELINE_DEPTH = 10;
 
@@ -21,7 +22,7 @@ public:
 	void update() {
 		// grab from pipeline
 		if (compressing[end].has_value()) {
-			compressor.outputRouter.route(compressing[end].value(), {}); // we just assume it works
+			compressor.outputRouter.route(compressing[end].value(), RouteArgs{}); // we just assume it works
 		}
 		// read into pipeline
 		compressing[end] = compressor.blockInput.getNextRequest(0);

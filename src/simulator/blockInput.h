@@ -15,9 +15,8 @@ public:
 	bool canAcceptRequest(unsigned int inputIndex) const;
 	bool pushRequest(unsigned int inputIndex, const Request& request);
 	void debugPrint() const;
-private:
-	std::optional<Request> getNextRequest(unsigned int inputIndex);
 
+	std::optional<Request> getNextRequest(unsigned int inputIndex);
 	std::array<std::queue<Request>, INPUT_COUNT> inputBuffers;
 };
 
@@ -56,7 +55,7 @@ void BlockInput<INPUT_COUNT, Compute>::debugPrint() const {
 		if (inputBuffers[inputIndex].size() == 0) {
 			printf("\tInput: %u: Empty\t", inputIndex);
 		} else {
-			printf("\tInput: %u: Size: %u", inputIndex, (unsigned int )inputBuffers[inputIndex].size());
+			printf("\tInput: %u: Size: %u", inputIndex, (unsigned int)inputBuffers[inputIndex].size());
 		}
 	}
 	printf("\n");

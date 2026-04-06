@@ -1,0 +1,368 @@
+{
+  "Limits": {},
+  "Routing": {
+    "CompressedStorage": {
+      "CACHE_EVICT": [
+        {
+          "Conditions": [],
+          "Mutator": {
+            "SetActionType": null
+          },
+          "Output": {
+            "Block": "Decompressor",
+            "Port": 0
+          }
+        }
+      ],
+      "COMPRESS": [
+        {
+          "Conditions": [],
+          "Mutator": {
+            "SetActionType": null
+          },
+          "Output": {
+            "Block": "Decompressor",
+            "Port": 0
+          }
+        }
+      ],
+      "READ": [
+        {
+          "Conditions": [],
+          "Mutator": {
+            "SetActionType": null
+          },
+          "Output": {
+            "Block": "Decompressor",
+            "Port": 0
+          }
+        }
+      ],
+      "WRITE": [
+        {
+          "Conditions": [],
+          "Mutator": {
+            "SetActionType": null
+          },
+          "Output": {
+            "Block": "Decompressor",
+            "Port": 0
+          }
+        }
+      ]
+    },
+    "Compressor": {
+      "CACHE_EVICT": [
+        {
+          "Conditions": [],
+          "Mutator": {
+            "SetActionType": null
+          },
+          "Output": {
+            "Block": "CompressedStorage",
+            "Port": 1
+          }
+        }
+      ],
+      "COMPRESS": [
+        {
+          "Conditions": [],
+          "Mutator": {
+            "SetActionType": null
+          },
+          "Output": {
+            "Block": "CompressedStorage",
+            "Port": 1
+          }
+        }
+      ]
+    },
+    "Decompressor": {
+      "CACHE_EVICT": [
+        {
+          "Conditions": [],
+          "Mutator": {
+            "SetActionType": null
+          },
+          "Output": {
+            "Block": "LoggerBlock",
+            "Port": 0
+          }
+        }
+      ],
+      "READ": [
+        {
+          "Conditions": [],
+          "Mutator": {
+            "SetActionType": null
+          },
+          "Output": {
+            "Block": "LoggerBlock",
+            "Port": 0
+          }
+        }
+      ],
+      "WRITE": [
+        {
+          "Conditions": [],
+          "Mutator": {
+            "SetActionType": null
+          },
+          "Output": {
+            "Block": "LoggerBlock",
+            "Port": 0
+          }
+        }
+      ]
+    },
+    "DramDataCache": {
+      "CACHE_EVICT": [
+        {
+          "Conditions": [],
+          "Mutator": {
+            "SetActionType": null
+          },
+          "Output": {
+            "Block": "LoggerBlock",
+            "Port": 0
+          }
+        }
+      ],
+      "COMPRESS": [
+        {
+          "Conditions": [],
+          "Mutator": {
+            "SetActionType": null
+          },
+          "Output": {
+            "Block": "LoggerBlock",
+            "Port": 0
+          }
+        }
+      ],
+      "READ": [
+        {
+          "Conditions": [],
+          "Mutator": {
+            "SetActionType": null
+          },
+          "Output": {
+            "Block": "LoggerBlock",
+            "Port": 0
+          }
+        }
+      ],
+      "WRITE": [
+        {
+          "Conditions": [],
+          "Mutator": {
+            "SetActionType": null
+          },
+          "Output": {
+            "Block": "LoggerBlock",
+            "Port": 0
+          }
+        }
+      ]
+    },
+    "MetadataTable": {
+      "CACHE_EVICT": [
+        {
+          "Conditions": [],
+          "Mutator": {
+            "SetActionType": null
+          },
+          "Output": {
+            "Block": "LoggerBlock",
+            "Port": 0
+          }
+        }
+      ],
+      "COMPRESS": [
+        {
+          "Conditions": [],
+          "Mutator": {
+            "SetActionType": null
+          },
+          "Output": {
+            "Block": "LoggerBlock",
+            "Port": 0
+          }
+        }
+      ],
+      "READ": [
+        {
+          "Conditions": [
+            {
+              "Arg": "CSA_valid",
+              "Compare": "==",
+              "Type": "Int Compare",
+              "Value": 1
+            },
+            {
+              "Arg": "DRC_valid",
+              "Compare": "==",
+              "Type": "Int Compare",
+              "Value": 0
+            }
+          ],
+          "Mutator": {
+            "SetActionType": null
+          },
+          "Output": {
+            "Block": "CompressedStorage",
+            "Port": 0
+          }
+        },
+        {
+          "Conditions": [],
+          "Mutator": {
+            "SetActionType": null
+          },
+          "Output": {
+            "Block": "CompressedStorage",
+            "Port": 0
+          }
+        },
+        {
+          "Conditions": [
+            {
+              "Arg": "DRC_valid",
+              "Compare": "==",
+              "Type": "Int Compare",
+              "Value": 1
+            }
+          ],
+          "Mutator": {
+            "SetActionType": null
+          },
+          "Output": {
+            "Block": "DramDataCache",
+            "Port": 0
+          }
+        }
+      ],
+      "WRITE": [
+        {
+          "Conditions": [],
+          "Mutator": {
+            "SetActionType": null
+          },
+          "Output": {
+            "Block": "CompressedStorage",
+            "Port": 0
+          }
+        },
+        {
+          "Conditions": [],
+          "Mutator": {
+            "SetActionType": null
+          },
+          "Output": {
+            "Block": "CompressedStorage",
+            "Port": 0
+          }
+        },
+        {
+          "Conditions": [],
+          "Mutator": {
+            "SetActionType": null
+          },
+          "Output": {
+            "Block": "CompressedStorage",
+            "Port": 0
+          }
+        }
+      ]
+    },
+    "SramCache": {
+      "READ": [
+        {
+          "Conditions": [
+            {
+              "Arg": "DRC_valid",
+              "Compare": "==",
+              "Type": "Int Compare",
+              "Value": 0
+            },
+            {
+              "Arg": "CSA_valid",
+              "Compare": "==",
+              "Type": "Int Compare",
+              "Value": 1
+            }
+          ],
+          "Mutator": {
+            "SetActionType": null
+          },
+          "Output": {
+            "Block": "CompressedStorage",
+            "Port": 0
+          }
+        },
+        {
+          "Conditions": [
+            {
+              "Arg": "CSA_valid",
+              "Compare": "==",
+              "Type": "Int Compare",
+              "Value": 0
+            },
+            {
+              "Arg": "DRC_valid",
+              "Compare": "==",
+              "Type": "Int Compare",
+              "Value": 0
+            }
+          ],
+          "Mutator": {
+            "SetActionType": null
+          },
+          "Output": {
+            "Block": "MetadataTable",
+            "Port": 0
+          }
+        },
+        {
+          "Conditions": [
+            {
+              "Arg": "DRC_valid",
+              "Compare": "==",
+              "Type": "Int Compare",
+              "Value": 1
+            }
+          ],
+          "Mutator": {
+            "SetActionType": null
+          },
+          "Output": {
+            "Block": "DramDataCache",
+            "Port": 0
+          }
+        }
+      ],
+      "WRITE": [
+        {
+          "Conditions": [],
+          "Mutator": {
+            "SetActionType": null
+          },
+          "Output": {
+            "Block": "CompressedStorage",
+            "Port": 0
+          }
+        },
+        {
+          "Conditions": [],
+          "Mutator": {
+            "SetActionType": null
+          },
+          "Output": {
+            "Block": "MetadataTable",
+            "Port": 0
+          }
+        }
+      ]
+    }
+  }
+}

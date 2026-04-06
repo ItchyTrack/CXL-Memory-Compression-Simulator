@@ -89,7 +89,7 @@ struct SDL_Window;
 struct SDL_Renderer;
 
 class Router {
-	friend void run(SDL_Window* window, SDL_Renderer* renderer);
+	friend class RouterEditor;
 public:
 	const RouterData& getData() const { return routerData; }
 	void setData(RouterData&& routerData) { this->routerData = routerData; }

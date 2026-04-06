@@ -15,7 +15,7 @@ std::string actionTypeToString(ActionType actionType);
 std::optional<ActionType> stringToActionType(const std::string actionType);
 
 struct Request {
-	Request(ActionType actionType) : action(actionType) {}
+	Request(ActionType actionType) : action(actionType) { }
 
 	void printInfo(bool newline = true) const {
 		printf("Request ");

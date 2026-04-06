@@ -7,7 +7,7 @@
  * The idea is that each components you create the template of Block for each component.
  */
 
- template <unsigned int INPUT_COUNT>
+template <unsigned int INPUT_COUNT>
 class LoggerBlockCompute;
 
 // [read requests, write requests] (not device but sram)
@@ -16,6 +16,7 @@ using LoggerBlock = Block<INPUT_COUNT, LoggerBlockCompute<INPUT_COUNT>, "LoggerB
 
 template <unsigned int INPUT_COUNT>
 class LoggerBlockCompute {
+	friend class SimulatorPanel;
 public:
 	LoggerBlockCompute(LoggerBlock<INPUT_COUNT>& loggerBlock) : loggerBlock(loggerBlock) { }
 
@@ -29,7 +30,7 @@ public:
 		}
 	}
 
-	void debugPrint() const {}
+	void debugPrint() const { }
 private:
 	LoggerBlock<INPUT_COUNT>& loggerBlock;
 };

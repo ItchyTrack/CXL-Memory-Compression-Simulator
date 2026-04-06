@@ -14,17 +14,18 @@ class DramDataCacheRouter;
 typedef Block<2, DramDataCacheCompute, "DramDataCache"> DramDataCache;
 
 class DramDataCacheCompute {
+	friend class SimulatorPanel;
 public:
 	DramDataCacheCompute(DramDataCache& dramDataCache) : dramDataCache(dramDataCache) { }
 
-	const unsigned int READ_TIME = 10; // clock cycels
+	const unsigned int READ_TIME = 10;	// clock cycels
 	const unsigned int WRITE_TIME = 20; // clock cycels
 
 	void update() {
 		if (currentRequest.has_value()) { // if the dram is doing anything
 			timeLeft -= 1;
 			if (timeLeft == 0) {
-				dramDataCache.outputRouter.route(currentRequest.value(), {}); // we just assume it works
+				dramDataCache.outputRouter.route(currentRequest.value(), RouteArgs{}); // we just assume it works
 				currentRequest = std::nullopt;
 			}
 		} else {

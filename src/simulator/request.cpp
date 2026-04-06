@@ -2,10 +2,10 @@
 
 std::string actionTypeToString(ActionType actionType) {
 	switch (actionType) {
-		case READ: return "READ";
-		case WRITE: return "WRITE";
-		case CACHE_EVICT: return "CACHE_EVICT";
-		case COMPRESS: return "COMPRESS";
+	case READ: return "READ";
+	case WRITE: return "WRITE";
+	case CACHE_EVICT: return "CACHE_EVICT";
+	case COMPRESS: return "COMPRESS";
 	}
 };
 

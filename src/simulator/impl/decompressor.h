@@ -9,10 +9,11 @@
 
 class DecompressorCompute;
 
-// [read requests, write requests]
-typedef Block<2, DecompressorCompute, "Decompressor"> Decompressor;
+// [input]
+typedef Block<1, DecompressorCompute, "Decompressor"> Decompressor;
 
 class DecompressorCompute {
+	friend class SimulatorPanel;
 public:
 	const unsigned int PIPELINE_DEPTH = 10;
 
@@ -21,7 +22,7 @@ public:
 	void update() {
 		// grab from pipeline
 		if (decompressing[end].has_value()) {
-			decompressor.outputRouter.route(decompressing[end].value(), {}); // we just assume it works
+			decompressor.outputRouter.route(decompressing[end].value(), RouteArgs{}); // we just assume it works
 		}
 		// read into pipeline
 		decompressing[end] = decompressor.blockInput.getNextRequest(0);

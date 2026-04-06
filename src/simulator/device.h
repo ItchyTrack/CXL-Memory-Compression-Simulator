@@ -23,14 +23,7 @@ class Device {
 public:
 	void read(const Request& request);
 	void write(const Request& request);
-	Device() :
-		compressedStorage(*this),
-		compressor(*this),
-		decompressor(*this),
-		dramCache(*this),
-		loggerBlock(*this),
-		metadataTable(*this),
-		sramCache(*this) {}
+	Device() : compressedStorage(*this), compressor(*this), decompressor(*this), dramCache(*this), loggerBlock(*this), metadataTable(*this), sramCache(*this) { }
 
 	void update() {
 		compressedStorage.update();

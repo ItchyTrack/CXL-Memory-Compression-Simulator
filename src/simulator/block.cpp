@@ -2,9 +2,8 @@
 #include "device.h"
 #include <cassert>
 
-template <string_litteral NAME>
-bool OutputRouter<NAME>::route(const Request& request, const RouteArgs& args) {
-	std::optional<BlockType> blockType = stringToBlockType(NAME.value);
+bool OutputRouter::route(const Request& request, const RouteArgs& args) {
+	std::optional<BlockType> blockType = stringToBlockType(getBlockName());
 	assert(blockType.has_value());
 	std::vector<std::tuple<BlockType, unsigned int, Request>> whereRouteTo = device.getDeviceConfig().router.router(blockType.value(), request, args);
 	for (const auto& [blockType, port, mutatedRequest] : whereRouteTo) {
@@ -18,4 +17,5 @@ bool OutputRouter<NAME>::route(const Request& request, const RouteArgs& args) {
 		case LOGGER_BLOCK: device.loggerBlock.getIputInterface().pushRequest(port, mutatedRequest); break;
 		}
 	}
+	return true;
 }

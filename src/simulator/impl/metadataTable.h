@@ -13,17 +13,21 @@ class MetadataTableCompute;
 typedef Block<2, MetadataTableCompute, "MetadataTable"> MetadataTable;
 
 class MetadataTableCompute {
+	friend class SimulatorPanel;
 public:
 	MetadataTableCompute(MetadataTable& metadataTable) : metadataTable(metadataTable) { }
 
-	const unsigned int READ_TIME = 10; // clock cycels
+	const unsigned int READ_TIME = 10;	// clock cycels
 	const unsigned int WRITE_TIME = 20; // clock cycels
 
 	void update() {
 		if (currentRequest.has_value()) { // if the dram is doing anything
 			timeLeft -= 1;
 			if (timeLeft == 0) {
-				metadataTable.outputRouter.route(currentRequest.value(), {{"DRC_valid", rand() % 2 == 0}, {"CSA_valid", rand() % 2 == 0}}); // we just assume it works
+				metadataTable.outputRouter.route(
+					currentRequest.value(),
+					RouteArgs{ { "DRC_valid", rand() % 2 == 0 }, { "CSA_valid", rand() % 2 == 0 } }
+				); // we just assume it works
 				currentRequest = std::nullopt;
 			}
 		} else {
