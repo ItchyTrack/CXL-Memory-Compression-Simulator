@@ -1,6 +1,7 @@
 #include "simulatorPanel.h"
 #include "../external/imgui.h"
 #include "../external/imgui_internal.h"
+#include "../simulator/router.h"
 #include <SDL3/SDL.h>
 #include <algorithm>
 #include <cstring>
@@ -44,13 +45,13 @@ void SimulatorPanel::renderControls() {
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.7f, 0.2f, 0.2f, 1.f));
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.9f, 0.3f, 0.3f, 1.f));
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.5f, 0.1f, 0.1f, 1.f));
-		if (ImGui::Button("  ⏸  Pause  ")) playing = false;
+		if (ImGui::Button("  ||  Pause  ")) playing = false;
 		ImGui::PopStyleColor(3);
 	} else {
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.1f, 0.55f, 0.2f, 1.f));
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.2f, 0.75f, 0.3f, 1.f));
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.05f, 0.4f, 0.1f, 1.f));
-		if (ImGui::Button("  ▶  Play   ")) {
+		if (ImGui::Button("  >  Play   ")) {
 			playing = true;
 			lastTime = (double)SDL_GetTicks();
 		}
@@ -276,19 +277,23 @@ void SimulatorPanel::renderInjectForm() {
 	ImGui::TextUnformatted("Inject Request");
 	ImGui::Spacing();
 
-	// Port selector — all blocks except Compressor have 2 ports
-	const BlockType bt = *selectedBlock;
-	const int maxPorts = (bt == COMPRESSOR) ? 1 : 2;
+	const BlockType bt       = *selectedBlock;
+	const auto      portNames = getInputPortNames(bt);
+	const int       maxPorts  = (int)portNames.size();
 	if (injectPort >= maxPorts) injectPort = 0;
 
-	ImGui::SetNextItemWidth(80);
-	ImGui::InputInt("Input Port", &injectPort);
-	injectPort = std::clamp(injectPort, 0, maxPorts - 1);
+	// Port selector: named combo
+	{
+		std::vector<const char*> cstrs;
+		for (const auto& s : portNames) cstrs.push_back(s.c_str());
+		ImGui::SetNextItemWidth(120);
+		ImGui::Combo("Input Port", &injectPort, cstrs.data(), (int)cstrs.size());
+	}
 
 	ImGui::SetNextItemWidth(140);
 	ImGui::Combo("Action Type", &injectActionIdx, actionNames, actionCount);
 
-	if (ImGui::Button("  ➕  Inject  ")) {
+	if (ImGui::Button("  +  Inject  ")) {
 		ActionType at = static_cast<ActionType>(injectActionIdx);
 		Request req(at);
 
@@ -296,11 +301,11 @@ void SimulatorPanel::renderInjectForm() {
 
 		switch (bt) {
 		case COMPRESSED_STORAGE: push(device.compressedStorage); break;
-		case COMPRESSOR: push(device.compressor); break;
-		case DECOMPRESSOR: push(device.decompressor); break;
-		case DRAM_DATA_CACHE: push(device.dramCache); break;
-		case METADATA_TABLE: push(device.metadataTable); break;
-		case SRAM_CACHE: push(device.sramCache); break;
+		case COMPRESSOR:         push(device.compressor);        break;
+		case DECOMPRESSOR:       push(device.decompressor);      break;
+		case DRAM_DATA_CACHE:    push(device.dramCache);         break;
+		case METADATA_TABLE:     push(device.metadataTable);     break;
+		case SRAM_CACHE:         push(device.sramCache);         break;
 		case LOGGER_BLOCK: printf("error?"); break;
 		}
 	}

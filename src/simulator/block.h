@@ -26,6 +26,7 @@ private:
 template <unsigned int INPUT_COUNT, class Compute, string_litteral NAME>
 class Block {
 	friend class SimulatorPanel;
+	friend class RouterEditor;
 	friend Compute;
 public:
 	Block(Device& device) : compute(*this), outputRouter(device, NAME.value) { }

@@ -14,6 +14,7 @@ typedef Block<2, MetadataTableCompute, "MetadataTable"> MetadataTable;
 
 class MetadataTableCompute {
 	friend class SimulatorPanel;
+	friend class RouterEditor;
 public:
 	MetadataTableCompute(MetadataTable& metadataTable) : metadataTable(metadataTable) { }
 

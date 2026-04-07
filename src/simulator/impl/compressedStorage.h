@@ -14,6 +14,7 @@ typedef Block<2, CompressedStorageCompute, "CompressedStorage"> CompressedStorag
 
 class CompressedStorageCompute {
 	friend class SimulatorPanel;
+	friend class RouterEditor;
 public:
 	CompressedStorageCompute(CompressedStorage& compressedStorage) : compressedStorage(compressedStorage) { }
 
@@ -32,6 +33,7 @@ public:
 			currentRequest = compressedStorage.blockInput.getNextRequest(0);
 			if (currentRequest.has_value()) {
 				timeLeft = READ_TIME;
+				doingRead = true;
 			} else {
 				currentRequest = compressedStorage.blockInput.getNextRequest(1);
 				if (currentRequest.has_value()) {

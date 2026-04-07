@@ -14,6 +14,7 @@ typedef Block<1, CompressorCompute, "Compressor"> Compressor;
 
 class CompressorCompute {
 	friend class SimulatorPanel;
+	friend class RouterEditor;
 public:
 	const unsigned int PIPELINE_DEPTH = 10;
 

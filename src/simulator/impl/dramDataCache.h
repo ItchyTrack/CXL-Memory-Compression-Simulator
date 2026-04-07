@@ -15,6 +15,7 @@ typedef Block<2, DramDataCacheCompute, "DramDataCache"> DramDataCache;
 
 class DramDataCacheCompute {
 	friend class SimulatorPanel;
+	friend class RouterEditor;
 public:
 	DramDataCacheCompute(DramDataCache& dramDataCache) : dramDataCache(dramDataCache) { }
 

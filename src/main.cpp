@@ -6,6 +6,7 @@
 #include "serialization/deviceConfigSerialization.h"
 #include "simulator/device.h"
 #include <SDL3/SDL.h>
+#include <algorithm>
 #include <stdio.h>
 
 void run(SDL_Window* window, SDL_Renderer* renderer);
@@ -113,20 +114,37 @@ void run(SDL_Window* window, SDL_Renderer* renderer) {
 		);
 
 		// ── Split layout: Simulator panel (left) | Router editor (right) ──
-		const float kSimWidth = 380.0f;
 		const ImVec2 avail = ImGui::GetContentRegionAvail();
 
 		// ── Left pane: simulation controls + block inspector ──────────────
-		ImGui::BeginChild("##simPane", { kSimWidth, avail.y }, ImGuiChildFlags_Borders);
+		ImGui::BeginChild("##simPane", { routerEditor.simPanelWidth, avail.y }, ImGuiChildFlags_Borders);
 		ImGui::TextUnformatted("Simulator");
 		ImGui::Separator();
 		simPanel.render();
 		ImGui::EndChild();
 
-		ImGui::SameLine(0, 4);
+		// ── Resizable splitter handle ─────────────────────────────────────
+		ImGui::SameLine(0, 0);
+		ImGui::InvisibleButton("##mainsplit", ImVec2(6.0f, avail.y));
+		if (ImGui::IsItemHovered() || ImGui::IsItemActive())
+			ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeEW);
+		if (ImGui::IsItemActive()) {
+			routerEditor.simPanelWidth += ImGui::GetIO().MouseDelta.x;
+			routerEditor.simPanelWidth  = std::clamp(routerEditor.simPanelWidth, 200.0f, avail.x - 400.0f);
+			routerEditor.saveLayoutFile();
+		}
+		{
+			const ImVec2 p0  = ImGui::GetItemRectMin();
+			const ImVec2 p1  = ImGui::GetItemRectMax();
+			const ImU32  col = (ImGui::IsItemHovered() || ImGui::IsItemActive())
+				? IM_COL32(180, 180, 180, 130)
+				: IM_COL32(110, 110, 110,  70);
+			ImGui::GetWindowDrawList()->AddRectFilled(p0, p1, col);
+		}
 
 		// ── Right pane: router editor ─────────────────────────────────────
-		ImGui::BeginChild("##routerPane", { avail.x - kSimWidth - 4.0f, avail.y }, ImGuiChildFlags_Borders);
+		ImGui::SameLine(0, 0);
+		ImGui::BeginChild("##routerPane", { avail.x - routerEditor.simPanelWidth - 6.0f, avail.y }, ImGuiChildFlags_Borders);
 		ImGui::TextUnformatted("Router Editor");
 		ImGui::Separator();
 		routerEditor.render();

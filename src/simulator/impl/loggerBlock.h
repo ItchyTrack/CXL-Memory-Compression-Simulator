@@ -17,6 +17,7 @@ using LoggerBlock = Block<INPUT_COUNT, LoggerBlockCompute<INPUT_COUNT>, "LoggerB
 template <unsigned int INPUT_COUNT>
 class LoggerBlockCompute {
 	friend class SimulatorPanel;
+	friend class RouterEditor;
 public:
 	LoggerBlockCompute(LoggerBlock<INPUT_COUNT>& loggerBlock) : loggerBlock(loggerBlock) { }
 

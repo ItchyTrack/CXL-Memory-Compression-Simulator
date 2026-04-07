@@ -14,6 +14,7 @@ typedef Block<1, DecompressorCompute, "Decompressor"> Decompressor;
 
 class DecompressorCompute {
 	friend class SimulatorPanel;
+	friend class RouterEditor;
 public:
 	const unsigned int PIPELINE_DEPTH = 10;
 

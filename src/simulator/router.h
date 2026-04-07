@@ -121,4 +121,34 @@ private:
 	RouterData routerData;
 };
 
+// ── Port / arg metadata ───────────────────────────────────────────────────────
+
+// Returns one name per input port of the given block.
+inline std::vector<std::string> getInputPortNames(BlockType bt) {
+	switch (bt) {
+	case COMPRESSED_STORAGE: return { "Reads",  "Writes" };
+	case COMPRESSOR:         return { "Input" };
+	case DECOMPRESSOR:       return { "Input" };
+	case DRAM_DATA_CACHE:    return { "Reads",  "Writes" };
+	case METADATA_TABLE:     return { "Reads",  "Writes" };
+	case SRAM_CACHE:         return { "Reads",  "Writes" };
+	case LOGGER_BLOCK:       return { "Input" };
+	}
+	return {};
+}
+
+// Returns the number of input ports for the given block.
+inline int getInputPortCount(BlockType bt) {
+	return (int)getInputPortNames(bt).size();
+}
+
+// Returns the RouteArgs keys that this block's compute unit may produce when routing out.
+inline std::vector<std::string> getRouteArgNames(BlockType bt) {
+	switch (bt) {
+	case METADATA_TABLE: return { "DRC_valid", "CSA_valid" };
+	case SRAM_CACHE:     return { "DRC_valid", "CSA_valid" };
+	default:             return {};
+	}
+}
+
 #endif /* router_h */

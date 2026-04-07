@@ -14,6 +14,7 @@ typedef Block<2, SramCacheCompute, "SramCache"> SramCache;
 
 class SramCacheCompute {
 	friend class SimulatorPanel;
+	friend class RouterEditor;
 public:
 	SramCacheCompute(SramCache& sramCache) : sramCache(sramCache) { }
 
@@ -24,7 +25,10 @@ public:
 
 		// if we found any requests then give it to the router
 		if (request.has_value()) {
-			sramCache.outputRouter.route(request.value(), RouteArgs{ { "Found", rand() % 2 == 0 } }); // we just assume it works because there is no input buffer limit
+			sramCache.outputRouter.route(
+				request.value(),
+				RouteArgs{ { "DRC_valid", rand() % 2 == 0 }, { "CSA_valid", rand() % 2 == 0 } }
+			); // we just assume it works because there is no input buffer limit
 		}
 	}
 
